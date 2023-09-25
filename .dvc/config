@@ -1,0 +1,4 @@
+[core]
+    remote = dvc-remote
+['remote "dvc-remote"']
+    url = C:/Users/nshut/AppData/Local/Temp/dvc-storage/
