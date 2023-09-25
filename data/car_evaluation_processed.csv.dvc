@@ -1,0 +1,5 @@
+outs:
+- md5: 4331613954dbc98358c1a9305bb13eb9
+  size: 53645
+  hash: md5
+  path: car_evaluation_processed.csv
