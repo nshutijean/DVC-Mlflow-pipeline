@@ -1,0 +1,6 @@
+numpy
+pandas
+seaborn
+matplotlib
+sklearn
+category_encoders
