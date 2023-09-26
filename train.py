@@ -31,7 +31,7 @@ data_url = dvc.api.get_url(
     rev = version
 )
 
-# define metrics for model perfromance evaluatio
+# define metrics for model perfromance evaluation
 def model_eval(actual, pred):
     """
     Calculating the accuracy score between actual and predicted values
@@ -40,6 +40,7 @@ def model_eval(actual, pred):
     Out: accuracy score
     """
     accuracy = accuracy_score(actual, pred)
+
     return accuracy
 
 # set an experiment name
@@ -67,9 +68,10 @@ def encode_features(X_train, X_test, columns):
     Out: X_train_encoded, X_test_encoded
     """
 
-    oe = OrdinalEncoder(cols=columns)
+    oe = ce.OrdinalEncoder(cols=columns)
     X_train_encoded = oe.fit_transform(X_train)
     X_test_encoded = oe.transform(X_test)
+
     return X_train_encoded, X_test_encoded
 
 # execute the training pipeline
@@ -103,7 +105,7 @@ if __name__ == "__main__":
         mlflow.log_artifact('artifacts/features.csv')
 
         # log artifacts: targets
-        y_cols = pd.DataFrame(list(y_train.columns)) 
+        y_cols = pd.DataFrame(list(y_train.unique())) 
         y_cols.to_csv('artifacts/targets.csv', header=False, index=False)
         mlflow.log_artifact('artifacts/targets.csv')
 
@@ -125,6 +127,9 @@ if __name__ == "__main__":
         # model performance using accuracy
         accuracy = model_eval(y_test, y_pred)
 
-        print("Accuracy:", accuracy)
+        # log the metric
+        mlflow.log_metric("accuracy", accuracy)
+
+        # print("Accuracy:, accuracy)
 
     mlflow.end_run()
