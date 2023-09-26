@@ -112,10 +112,19 @@ if __name__ == "__main__":
         X_train, X_test = encode_features(X_train, X_test, cols)
 
         # set model parameters
-        criterion = "gini" if len(sys.argv) > 1 else "entropy"
+        criterion = sys.argv[0] if len(sys.argv) > 1 else "entropy"
         max_depth = float(sys.argv[1]) if len(sys.argv) > 2 else 3
 
         # training the model
         dtc = DecisionTreeClassifier(criterion=criterion, max_depth=max_depth, random_state=42)
+        dtc.fit(X_train, y_train)
+
+        # predicted values
+        y_pred = dtc.predict(X_test)
+
+        # model performance using accuracy
+        accuracy = model_eval(y_test, y_pred)
+
+        print("Accuracy:", accuracy)
 
     mlflow.end_run()
