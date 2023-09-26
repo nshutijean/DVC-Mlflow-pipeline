@@ -21,10 +21,14 @@ logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
 
 # get data url from DVC
+path = 'data/car_evaluation_processed.csv'
+repo = '.'
+version = 'v1'
+
 data_url = dvc.api.get_url(
-    path='data/car_evaluation_processed.csv',
-    repo= '.',
-    rev = 'v1'
+    path=path,
+    repo=repo,
+    rev = version
 )
 
 # define metrics for model perfromance evaluatio
@@ -74,7 +78,7 @@ if __name__ == "__main__":
         # split data into train and test
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        # create an artifacts directory
+        # create an 'artifacts' directory
         directory = "./artifacts"
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -82,11 +86,18 @@ if __name__ == "__main__":
         # log artifacts: features
         X_cols = pd.DataFrame(list(X_train.columns))
         X_cols.to_csv('artifacts/features.csv', header=False, index=False)
-        mlflow.log_artifact('features.csv')
+        mlflow.log_artifact('artifacts/features.csv')
 
         # log artifacts: targets
         y_cols = pd.DataFrame(list(y_train.columns)) 
         y_cols.to_csv('artifacts/targets.csv', header=False, index=False)
-        mlflow.log_artifact('targets.csv')
-        
+        mlflow.log_artifact('artifacts/targets.csv')
+
+        # set model parameters
+        criterion = "gini" if len(sys.argv) > 1 else "entropy"
+        max_depth = float(sys.argv[1]) if len(sys.argv) > 2 else 3
+
+        # training the model
+        dtc = DecisionTreeClassifier(criterion=criterion, max_depth=max_depth, random_state=42)
+
     mlflow.end_run()
