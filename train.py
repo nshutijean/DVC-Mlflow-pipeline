@@ -58,6 +58,20 @@ def log_data_params(data_url, data_version, data):
     mlflow.log_param("num_rows", data.shape[0])
     mlflow.log_param("num_cols", data.shape[1])
 
+# encode features
+def encode_features(X_train, X_test, columns):
+    """
+    Encoding the features with ordinal encoder
+
+    Inp: X_train, X_test, columns
+    Out: X_train_encoded, X_test_encoded
+    """
+
+    oe = OrdinalEncoder(cols=columns)
+    X_train_encoded = oe.fit_transform(X_train)
+    X_test_encoded = oe.transform(X_test)
+    return X_train_encoded, X_test_encoded
+
 # execute the training pipeline
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
@@ -92,6 +106,10 @@ if __name__ == "__main__":
         y_cols = pd.DataFrame(list(y_train.columns)) 
         y_cols.to_csv('artifacts/targets.csv', header=False, index=False)
         mlflow.log_artifact('artifacts/targets.csv')
+
+        # encode the features
+        cols = ['buying', 'meant', 'doors', 'persons', 'lug_boot', 'safety']
+        X_train, X_test = encode_features(X_train, X_test, cols)
 
         # set model parameters
         criterion = "gini" if len(sys.argv) > 1 else "entropy"
