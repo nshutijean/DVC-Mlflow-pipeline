@@ -9,6 +9,7 @@ import category_encoders as ce
 
 import warnings
 import sys
+import os
 import logging
 
 import mlflow
@@ -53,7 +54,7 @@ def log_data_params(data_url, data_version, data):
     mlflow.log_param("num_rows", data.shape[0])
     mlflow.log_param("num_cols", data.shape[1])
 
-# executing the training pipeline
+# execute the training pipeline
 if __name__ == "__main__":
     warnings.filterwarnings("ignore")
     
@@ -65,3 +66,27 @@ if __name__ == "__main__":
 
         # log data parameters
         log_data_params(data_url, version, data)
+
+        # X and y split
+        X = data.drop(['class'], axis=1)
+        y = data['class']
+
+        # split data into train and test
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # create an artifacts directory
+        directory = "./artifacts"
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        # log artifacts: features
+        X_cols = pd.DataFrame(list(X_train.columns))
+        X_cols.to_csv('artifacts/features.csv', header=False, index=False)
+        mlflow.log_artifact('features.csv')
+
+        # log artifacts: targets
+        y_cols = pd.DataFrame(list(y_train.columns)) 
+        y_cols.to_csv('artifacts/targets.csv', header=False, index=False)
+        mlflow.log_artifact('targets.csv')
+        
+    mlflow.end_run()
