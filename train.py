@@ -23,10 +23,45 @@ logger = logging.getLogger(__name__)
 data_url = dvc.api.get_url(
     path='data/car_evaluation_processed.csv',
     repo= '.',
-    version = 'v1'
+    rev = 'v1'
 )
 
 # define metrics for model perfromance evaluatio
 def model_eval(actual, pred):
+    """
+    Calculating the accuracy score between actual and predicted values
+
+    Inp: actual, predicated values
+    Out: accuracy score
+    """
     accuracy = accuracy_score(actual, pred)
     return accuracy
+
+# set an experiment name
+mlflow.set_experiment("car-evaluation")
+
+# log parameters
+def log_data_params(data_url, data_version, data):
+    """
+    Logging data parameters to MLflow
+
+    Inp: any
+    Out: none
+    """
+    mlflow.log_param("data_url", data_url)
+    mlflow.log_param("data_version", data_version)
+    mlflow.log_param("num_rows", data.shape[0])
+    mlflow.log_param("num_cols", data.shape[1])
+
+# executing the training pipeline
+if __name__ == "__main__":
+    warnings.filterwarnings("ignore")
+    
+    # read data from the remote repository
+    data = pd.read_csv(data_url, sep=",")
+
+    # initialize mlflow
+    with mlflow.start_run():
+
+        # log data parameters
+        log_data_params(data_url, version, data)
