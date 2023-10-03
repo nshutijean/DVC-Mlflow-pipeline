@@ -41,3 +41,7 @@ To run the workflow:
 4. Execute the workflow and train the model using `python train.py` (this will also track the experiment with MLflow)
      - You can also use arguments like `python train.py gini 4` which signifies the criterion to use for splitting (gini) and the max depth of the tree (4).
 5. Run `mlflow ui` to view the experiment in the MLflow UI
+
+### Blog post
+
+Additionally, you can read [this](https://jeannshuti.hashnode.dev/end-to-end-mlops-with-dvc-and-mlflow) blog post which goes into detail about the DVC and Mlflow workflow (with code snippets)
